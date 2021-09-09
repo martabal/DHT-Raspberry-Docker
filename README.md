@@ -1,7 +1,9 @@
 # DHT_Raspberry
-Monitor temperature and humidity with your Raspberry  and Grafana
+Monitor temperature and humidity with your Raspberry, dockers and Grafana
 
 ## 1. Connect your DHT with your Raspberry pi with GPIO
+
+Connect gnd, 3.3V and GPIO4
 
 ## 2. Edit temperatureloop.sh
 
