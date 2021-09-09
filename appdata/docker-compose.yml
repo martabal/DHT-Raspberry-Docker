@@ -1,0 +1,23 @@
+influxdb:
+  image: influxdb:1.8
+  container_name: influxdb
+  restart: unless-stopped
+  ports:
+    - "8083:8083"
+    - "8086:8086"
+  volumes:
+    # Data persistency
+    # sudo mkdir -p /srv/docker/influxdb/data
+    - /your/path/appdata/influxdb:/var/lib/influxdb
+    
+telegraf:
+  image: telegraf:latest
+  container_name: telegraf
+
+  restart: unless-stopped
+  volumes:
+    # Data persistency
+    - /your/path/appdata/Telegraf/telegraf.conf:/etc/telegraf/telegraf.conf
+    - '/your/path/script/temp/temperature.log:/etc/telegraf/temperature.log:ro'
+    
+  
