@@ -25,13 +25,15 @@
   "links": [],
   "panels": [
     {
-      "datasource": "InfluxDB raspberry",
+      "datasource": "Temperature",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 45,
+          "min": 5,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -41,15 +43,15 @@
               },
               {
                 "color": "semi-dark-green",
-                "value": 20
+                "value": 15
               },
               {
                 "color": "semi-dark-orange",
-                "value": 30
+                "value": 25
               },
               {
                 "color": "semi-dark-red",
-                "value": 40
+                "value": 35
               }
             ]
           },
@@ -76,7 +78,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.1.3",
+      "pluginVersion": "8.1.5",
       "targets": [
         {
           "groupBy": [
@@ -119,13 +121,15 @@
       "type": "gauge"
     },
     {
-      "datasource": "InfluxDB raspberry",
+      "datasource": "Temperature",
       "fieldConfig": {
         "defaults": {
           "color": {
             "mode": "thresholds"
           },
           "mappings": [],
+          "max": 90,
+          "min": 15,
           "thresholds": {
             "mode": "absolute",
             "steps": [
@@ -166,7 +170,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "8.1.3",
+      "pluginVersion": "8.1.5",
       "targets": [
         {
           "groupBy": [
@@ -224,32 +228,60 @@
             },
             "query": {
               "params": [
-                "B",
-                "5m",
+                "A",
+                "1h",
                 "now"
               ]
             },
             "reducer": {
               "params": [],
-              "type": "max"
+              "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                15
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
             },
             "type": "query"
           }
         ],
         "executionErrorState": "keep_state",
-        "for": "5m",
-        "frequency": "1m",
+        "for": "30m",
+        "frequency": "45m",
         "handler": 1,
         "message": "Temperature issues at home",
         "name": "Temperature alert",
         "noDataState": "keep_state",
-        "notifications": []
+        "notifications": [
+          {
+            "uid": "rSJ_UIInk"
+          }
+        ]
       },
-      "datasource": "InfluxDB raspberry",
+      "datasource": "Temperature",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds",
+            "seriesBy": "last"
           },
           "custom": {
             "axisLabel": "",
@@ -263,13 +295,16 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
+            "lineStyle": {
+              "fill": "solid"
+            },
             "lineWidth": 1,
             "pointSize": 1,
             "scaleDistribution": {
               "type": "linear"
             },
-            "showPoints": "always",
+            "showPoints": "auto",
             "spanNulls": true,
             "stacking": {
               "group": "A",
@@ -284,20 +319,24 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-blue",
+                "color": "semi-dark-green",
                 "value": null
               },
               {
+                "color": "semi-dark-blue",
+                "value": 0
+              },
+              {
                 "color": "semi-dark-green",
-                "value": 20
+                "value": 15
               },
               {
                 "color": "semi-dark-orange",
-                "value": 30
+                "value": 25
               },
               {
                 "color": "semi-dark-red",
-                "value": 40
+                "value": 35
               }
             ]
           },
@@ -312,19 +351,21 @@
         "y": 9
       },
       "id": 2,
+      "maxDataPoints": 50,
       "options": {
         "legend": {
           "calcs": [
             "last"
           ],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "none"
         }
       },
       "pluginVersion": "8.1.3",
+      "repeat": null,
       "targets": [
         {
           "groupBy": [
@@ -345,44 +386,9 @@
           "measurement": "room_temperature_humidity",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT mean(\"temperature\") FROM \"room_temperature_humidity\"  GROUP BY time(   $__interval)",
+          "rawQuery": true,
           "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "temperature"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": []
-        },
-        {
-          "groupBy": [
-            {
-              "params": [
-                "5m"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "hide": true,
-          "measurement": "room_temperature_humidity",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
           "resultFormat": "time_series",
           "select": [
             [
@@ -416,11 +422,73 @@
       "type": "timeseries"
     },
     {
-      "datasource": "InfluxDB raspberry",
+      "alert": {
+        "alertRuleTags": {},
+        "conditions": [
+          {
+            "evaluator": {
+              "params": [
+                80
+              ],
+              "type": "gt"
+            },
+            "operator": {
+              "type": "and"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          },
+          {
+            "evaluator": {
+              "params": [
+                30
+              ],
+              "type": "lt"
+            },
+            "operator": {
+              "type": "or"
+            },
+            "query": {
+              "params": [
+                "A",
+                "1h",
+                "now"
+              ]
+            },
+            "reducer": {
+              "params": [],
+              "type": "avg"
+            },
+            "type": "query"
+          }
+        ],
+        "executionErrorState": "keep_state",
+        "for": "30m",
+        "frequency": "45m",
+        "handler": 1,
+        "name": "Humidity alert",
+        "noDataState": "keep_state",
+        "notifications": [
+          {
+            "uid": "rSJ_UIInk"
+          }
+        ]
+      },
+      "datasource": "Temperature",
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "palette-classic"
+            "mode": "thresholds"
           },
           "custom": {
             "axisLabel": "",
@@ -434,9 +502,9 @@
               "tooltip": false,
               "viz": false
             },
-            "lineInterpolation": "linear",
+            "lineInterpolation": "smooth",
             "lineWidth": 1,
-            "pointSize": 5,
+            "pointSize": 1,
             "scaleDistribution": {
               "type": "linear"
             },
@@ -455,11 +523,15 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "semi-dark-orange",
+                "color": "semi-dark-green",
                 "value": null
               },
               {
-                "color": "red",
+                "color": "semi-dark-orange",
+                "value": 35
+              },
+              {
+                "color": "semi-dark-green",
                 "value": 40
               },
               {
@@ -479,14 +551,15 @@
         "y": 9
       },
       "id": 3,
+      "maxDataPoints": 50,
       "options": {
         "legend": {
           "calcs": [],
-          "displayMode": "list",
+          "displayMode": "hidden",
           "placement": "bottom"
         },
         "tooltip": {
-          "mode": "single"
+          "mode": "none"
         }
       },
       "targets": [
@@ -505,9 +578,12 @@
               "type": "fill"
             }
           ],
+          "hide": false,
           "measurement": "room_temperature_humidity",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT mean(\"humidity\") FROM \"room_temperature_humidity\" WHERE $timeFilter GROUP BY time($__interval)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -527,7 +603,16 @@
           "tags": []
         }
       ],
+      "thresholds": [
+        {
+          "colorMode": "critical",
+          "op": "gt",
+          "value": 80,
+          "visible": true
+        }
+      ],
       "title": "Humidity",
+      "transformations": [],
       "type": "timeseries"
     }
   ],
@@ -546,5 +631,5 @@
   "timezone": "",
   "title": "Temperature & Humidity",
   "uid": "xp5qN4Inz",
-  "version": 13
+  "version": 51
 }
