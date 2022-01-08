@@ -13,7 +13,9 @@ Edit temperatureloop.sh with **sudo nano temperatureloop.sh** and change /YOUR/P
 ## 3. Execute python script on your Raspberry pi
 
 Copy temperature.py and temperatureloops.sh on your raspberry pi and execute temperatureloop.sh on background.
->(Edit DHT11 <em>h,t = adht.read_retry(adht.DHT11, 4)</em> if you use another DHT)
+>(Edit DHT11 <em>h,t = adht.read_retry(adht.DHT11, 4)</em> if you use another DHT). 
+
+You can also use script/temp/notelegraf.py where telegraf is not required. You have to edit notelegraf.py to match your influxdb settings. You have to create a databse in influxdb.
 
 
 ## 4. Create a docker-compose.yml file
